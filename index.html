@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Bài trắc nghiệm trực tuyến</title>
+<style>
+  :root{
+    --ink:#1B2942;
+    --ink-soft:#5B6B84;
+    --paper:#E9EDF3;
+    --card:#FFFFFF;
+    --crimson:#A3323D;
+    --crimson-soft:#F4E3E5;
+    --brass:#AD8A3B;
+    --success:#2F7A5E;
+    --success-soft:#E1EEE7;
+    --border:#D8DEE8;
+    --radius:14px;
+    --shadow:0 10px 34px -14px rgba(27,41,66,0.30);
+    --serif:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    --mono:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background-color:var(--paper);
+    background-image:repeating-linear-gradient(135deg, rgba(27,41,66,0.028) 0px, rgba(27,41,66,0.028) 1px, transparent 1px, transparent 15px);
+    min-height:100vh;
+    -webkit-user-select:none; user-select:none;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+  input, textarea{-webkit-user-select:text; user-select:text;}
+  #app{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:28px 16px;}
+  .screen{display:none; width:100%;}
+  .screen.active{display:flex; justify-content:center; animation:fadeSlideIn .35s ease;}
+  @keyframes fadeSlideIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion:reduce){
+    .screen.active{animation:none;}
+    *{animation-duration:.001s !important; transition-duration:.001s !important;}
+  }
+
+  /* ---------- Ticket card ---------- */
+  .ticket-card{
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    width:100%;
+    max-width:460px;
+    padding:30px 30px 28px;
+    position:relative;
+  }
+  .ticket-card.wide{max-width:560px;}
+  .ticket-ribbon{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    color:var(--brass);
+    border:1px solid var(--brass);
+    border-radius:20px;
+    padding:4px 12px;
+    margin-bottom:14px;
+    text-transform:uppercase;
+  }
+  .ticket-title{
+    font-family:var(--serif);
+    font-size:26px;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  .ticket-sub{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin:0 0 22px;
+    line-height:1.5;
+  }
+  .ticket-divider{
+    position:relative;
+    border-top:2px dashed var(--border);
+    margin:22px 0;
+  }
+  .ticket-divider::before, .ticket-divider::after{
+    content:"";
+    position:absolute;
+    top:-9px;
+    width:18px; height:18px;
+    background:var(--paper);
+    border-radius:50%;
+  }
+  .ticket-divider::before{left:-30px;}
+  .ticket-divider::after{right:-30px;}
+
+  form label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+  form input[type="text"], form input[type="password"]{
+    display:block;
+    width:100%;
+    margin-top:6px;
+    padding:12px 14px;
+    font-size:16px;
+    font-family:var(--sans);
+    color:var(--ink);
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    background:#FBFCFE;
+    outline:none;
+    transition:border-color .15s;
+  }
+  form input:focus{border-color:var(--ink);}
+  .error-text{
+    color:var(--crimson);
+    font-size:13px;
+    font-weight:600;
+    margin:-6px 0 14px;
+  }
+  .btn-primary{
+    width:100%;
+    padding:14px 18px;
+    font-size:15px;
+    font-weight:700;
+    color:#fff;
+    background:var(--ink);
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    letter-spacing:.01em;
+    transition:transform .1s, opacity .15s;
+  }
+  .btn-primary:hover{opacity:.92;}
+  .btn-primary:active{transform:scale(.98);}
+  .btn-primary:focus-visible{outline:3px solid var(--brass); outline-offset:2px;}
+  .btn-large{padding:17px 18px; font-size:16px; margin-top:6px;}
+  .btn-ghost{
+    width:100%;
+    margin-top:10px;
+    padding:10px;
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink-soft);
+    background:none;
+    border:none;
+    cursor:pointer;
+  }
+  .btn-ghost:focus-visible{outline:2px solid var(--brass);}
+
+  /* ---------- Rules list ---------- */
+  .rules-list{list-style:none; margin:0 0 26px; padding:0;}
+  .rules-list li{
+    position:relative;
+    padding:10px 0 10px 26px;
+    font-size:14.5px;
+    line-height:1.55;
+    color:var(--ink);
+    border-bottom:1px solid var(--border);
+  }
+  .rules-list li:last-child{border-bottom:none;}
+  .rules-list li::before{
+    content:"§";
+    position:absolute; left:0; top:10px;
+    color:var(--brass);
+    font-family:var(--serif);
+    font-weight:700;
+  }
+  .rules-list li.rule-warning{
+    background:var(--crimson-soft);
+    border-radius:8px;
+    padding:12px 14px 12px 34px;
+    color:var(--crimson);
+    border-bottom:none;
+    margin-top:6px;
+  }
+  .rules-list li.rule-warning::before{content:"!"; color:var(--crimson); left:12px;}
+
+  /* ---------- Preview badge (teacher build only) ---------- */
+  .preview-badge{
+    position:fixed; top:0; left:0; right:0;
+    background:var(--brass); color:#fff;
+    text-align:center; font-size:12.5px; font-weight:700;
+    letter-spacing:.04em;
+    padding:7px; z-index:9999;
+    font-family:var(--mono);
+  }
+
+  /* ---------- Exam screen ---------- */
+  #screen-exam{flex-direction:column; align-items:center; max-width:640px; margin:0 auto;}
+  .exam-topbar{
+    width:100%; max-width:640px;
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:16px;
+  }
+  .exam-progress{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--ink-soft);
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:6px 14px;
+  }
+  .timer-ring-wrap{position:relative; width:56px; height:56px;}
+  .timer-ring{width:56px; height:56px; transform:rotate(-90deg);}
+  .ring-bg{fill:none; stroke:var(--border); stroke-width:5;}
+  .ring-fg{fill:none; stroke:var(--ink); stroke-width:5; stroke-linecap:round; transition:stroke-dashoffset 1s linear;}
+  .ring-fg.ring-critical{stroke:var(--crimson); animation:pulseRing 1s infinite;}
+  @keyframes pulseRing{0%,100%{opacity:1;} 50%{opacity:.45;}}
+  .timer-number{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-weight:700; font-size:15px; color:var(--ink);
+  }
+  .exam-card{
+    width:100%; max-width:640px;
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:28px 26px;
+  }
+  .question-type-tag{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--brass);
+    margin:0 0 10px;
+  }
+  .question-text{
+    font-family:var(--serif);
+    font-size:21px;
+    line-height:1.4;
+    margin:0 0 22px;
+    color:var(--ink);
+  }
+  .options-list{display:flex; flex-direction:column; gap:10px;}
+  .option-row{
+    display:flex; align-items:flex-start; gap:12px;
+    padding:14px 16px;
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
+    line-height:1.45;
+    transition:border-color .15s, background .15s;
+  }
+  .option-row:hover{border-color:var(--ink-soft);}
+  .option-row input{margin-top:3px; width:18px; height:18px; accent-color:var(--ink); flex-shrink:0;}
+  .option-row:has(input:checked){border-color:var(--ink); background:#F0F2F7;}
+  .exam-footer{
+    width:100%; max-width:640px;
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:16px; gap:12px;
+  }
+  .student-chip{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  #btn-next{width:auto; padding:12px 22px;}
+
+  /* ---------- Result screen ---------- */
+  .score-ring-wrap{position:relative; width:150px; height:150px; margin:0 auto 22px;}
+  .score-ring{width:150px; height:150px; transform:rotate(-90deg);}
+  .ring-fg-score{fill:none; stroke:var(--success); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .8s ease;}
+  .score-number{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--sans); font-size:44px; font-weight:700; color:var(--crimson);
+  }
+  .info-table{width:100%; border-collapse:collapse; margin-top:6px;}
+  .info-table th, .info-table td{
+    text-align:left; padding:10px 4px;
+    border-bottom:1px solid var(--border);
+    font-size:16px;
+  }
+  .info-table th{color:var(--ink-soft); font-weight:600; width:46%;}
+  .info-table td{color:var(--ink); font-family:var(--mono);}
+  .info-table tr:last-child th, .info-table tr:last-child td{border-bottom:none;}
+
+  /* ---------- Locked screen ---------- */
+  #screen-locked.active{
+    position:fixed; inset:0; z-index:10000;
+    background:linear-gradient(160deg, var(--crimson) 0%, #6E2029 100%);
+    align-items:center;
+    animation:fadeSlideIn .3s ease;
+  }
+  .locked-panel{
+    background:rgba(255,255,255,0.97);
+    border-radius:var(--radius);
+    max-width:460px; width:100%;
+    margin:16px;
+    padding:34px 30px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+  }
+  .locked-icon{
+    width:60px; height:60px; margin:0 auto 16px;
+    border-radius:50%;
+    background:var(--crimson-soft);
+    color:var(--crimson);
+    display:flex; align-items:center; justify-content:center;
+    font-size:30px; font-weight:700;
+  }
+  .locked-panel h1{
+    font-family:var(--serif); font-size:22px; color:var(--crimson); margin:0 0 10px;
+    letter-spacing:.01em;
+  }
+  .locked-panel p{font-size:14.5px; color:var(--ink-soft); line-height:1.5; margin:0 0 18px;}
+
+  /* ---------- Blocked screen ---------- */
+  #screen-blocked .ticket-card{text-align:center;}
+  #screen-blocked h1{font-family:var(--serif); font-size:22px; margin:0 0 12px;}
+  #screen-blocked p{font-size:14.5px; color:var(--ink-soft); line-height:1.55;}
+
+  @media (max-width:480px){
+    .ticket-card{padding:24px 20px;}
+    .exam-card{padding:22px 18px;}
+    .question-text{font-size:19px;}
+    .ticket-divider::before, .ticket-divider::after{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div id="preview-badge" class="preview-badge" hidden>PHIÊN BẢN GIẢNG VIÊN — XEM TRƯỚC / KHÔNG GIỚI HẠN SỐ LẦN LÀM</div>
+
+<main id="app">
+
+  <!-- 1. THÔNG TIN SINH VIÊN -->
+  <section id="screen-info" class="screen active">
+    <div class="ticket-card">
+      <span class="ticket-ribbon">LUYỆN TẬP</span>
+      <h1 class="ticket-title">Thông tin sinh viên</h1>
+      <p class="ticket-sub">Vui lòng nhập đầy đủ và chính xác thông tin trước khi vào làm bài.</p>
+      <div class="ticket-divider"></div>
+      <form id="form-info">
+        <label>Lớp học phần
+          <input type="text" id="input-lop" required autocomplete="off">
+        </label>
+        <label>MSSV
+          <input type="text" id="input-mssv" required autocomplete="off" inputmode="numeric">
+        </label>
+        <label>Họ và tên
+          <input type="text" id="input-hoten" required autocomplete="off">
+        </label>
+        <button type="submit" class="btn-primary">Tiếp tục →</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 2. MẬT KHẨU -->
+  <section id="screen-password" class="screen">
+    <div class="ticket-card">
+      <span class="ticket-ribbon">Xác thực truy cập</span>
+      <h1 class="ticket-title">Nhập mật khẩu</h1>
+      <p class="ticket-sub">Mật khẩu truy cập do giảng viên cung cấp.</p>
+      <div class="ticket-divider"></div>
+      <form id="form-password">
+        <label>Mật khẩu
+          <input type="password" id="input-password" required autocomplete="off">
+        </label>
+        <p class="error-text" id="password-error" hidden>Sai mật khẩu. Vui lòng thử lại.</p>
+        <button type="submit" class="btn-primary">Vào làm bài →</button>
+      </form>
+      <button type="button" class="btn-ghost" id="btn-back-info">← Quay lại nhập thông tin</button>
+    </div>
+  </section>
+
+  <!-- 3. HƯỚNG DẪN -->
+  <section id="screen-instructions" class="screen">
+    <div class="ticket-card wide">
+      <span class="ticket-ribbon">Hướng dẫn làm bài</span>
+      <h1 class="ticket-title">Trước khi bắt đầu, vui lòng đọc kỹ</h1>
+      <ul class="rules-list">
+        <li>Đề gồm <strong id="rule-count">—</strong> câu hỏi. Mỗi câu có giới hạn thời gian <strong id="rule-time">—</strong> giây; hết giờ hệ thống tự động ghi nhận đáp án hiện tại và chuyển sang câu tiếp theo.</li>
+        <li>Sau khi đã chuyển sang câu mới, bạn <strong>không thể quay lại</strong> câu trước để sửa đáp án.</li>
+        <li>Bài làm sẽ hiển thị ở chế độ toàn màn hình. Trong khi làm bài, <strong>không thoát toàn màn hình, không chuyển sang tab/ứng dụng khác, không thu nhỏ cửa sổ</strong>.</li>
+        <li>Không chụp ảnh màn hình, không sao chép nội dung đề trong khi làm bài.</li>
+        <li id="rule-once-line">Mỗi thiết bị chỉ được làm <strong>1 lần duy nhất</strong>.</li>
+        <li class="rule-warning">Nếu vi phạm bất kỳ quy định nào ở trên, bài làm sẽ <strong>bị khóa ngay lập tức</strong> và nhận 0 điểm.</li>
+      </ul>
+      <button id="btn-start-exam" class="btn-primary btn-large">Bắt đầu làm bài</button>
+    </div>
+  </section>
+
+  <!-- 4. LÀM BÀI -->
+  <section id="screen-exam" class="screen">
+    <div class="exam-topbar">
+      <span class="exam-progress" id="exam-progress">Câu 1 / 1</span>
+      <div class="timer-ring-wrap">
+        <svg viewBox="0 0 60 60" class="timer-ring">
+          <circle cx="30" cy="30" r="26" class="ring-bg"></circle>
+          <circle cx="30" cy="30" r="26" class="ring-fg" id="ring-fg"></circle>
+        </svg>
+        <span class="timer-number" id="timer-number">--</span>
+      </div>
+    </div>
+    <div class="exam-card">
+      <span class="question-type-tag" id="question-type-tag">Chọn 1 đáp án đúng</span>
+      <h2 class="question-text" id="question-text">Đang tải câu hỏi…</h2>
+      <div class="options-list" id="options-list"></div>
+    </div>
+    <div class="exam-footer">
+      <span class="student-chip" id="student-chip-exam"></span>
+      <button id="btn-next" class="btn-primary">Câu tiếp theo →</button>
+    </div>
+  </section>
+
+  <!-- 5. KẾT QUẢ -->
+  <section id="screen-result" class="screen">
+    <div class="ticket-card">
+      <span class="ticket-ribbon">Kết quả bài làm</span>
+      <div class="score-ring-wrap">
+        <svg viewBox="0 0 120 120" class="score-ring">
+          <circle cx="60" cy="60" r="52" class="ring-bg"></circle>
+          <circle cx="60" cy="60" r="52" class="ring-fg-score" id="ring-fg-score"></circle>
+        </svg>
+        <div class="score-number"><span id="score-value">0</span></div>
+      </div>
+      <table class="info-table" id="result-info-table"></table>
+    </div>
+  </section>
+
+  <!-- 6. BỊ KHÓA (vi phạm) -->
+  <section id="screen-locked" class="screen">
+    <div class="locked-panel">
+      <div class="locked-icon">✕</div>
+      <h1>Bài làm đã bị khóa</h1>
+      <p id="locked-reason"></p>
+      <table class="info-table" id="locked-info-table"></table>
+    </div>
+  </section>
+
+  <!-- 7. KHÔNG THỂ TRUY CẬP (đã làm / đã khóa từ trước) -->
+  <section id="screen-blocked" class="screen">
+    <div class="ticket-card">
+      <h1 id="blocked-title">Không thể truy cập</h1>
+      <p id="blocked-message"></p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ============================================================
+   ⚙️  KHU VỰC CẤU HÌNH — GIẢNG VIÊN CHỈNH SỬA TẠI ĐÂY
+   ============================================================ */
+const CONFIG = {
+  // Mật khẩu để sinh viên truy cập bài làm (giảng viên cung cấp cho SV trong buổi thi)
+  password: "0808",
+
+  // Thời gian tối đa cho MỖI câu hỏi (đơn vị: giây)
+  timePerQuestion: 45,
+
+  // true = sinh viên có thể bấm "Câu tiếp theo" để qua câu sớm nếu đã trả lời xong
+  //        (vẫn tự động chuyển câu khi hết giờ dù có bấm hay không)
+  // false = chỉ tự động chuyển câu khi hết giờ, ẩn nút "Câu tiếp theo"
+  allowManualNext: true,
+
+  // false = mỗi thiết bị chỉ làm được 1 lần (dùng cho bản SINH VIÊN)
+  // true  = không giới hạn số lần làm trên cùng thiết bị (dùng cho bản GIẢNG VIÊN xem trước/chỉnh sửa)
+  allowMultipleAttempts: false,
+
+  // Mã đề: đổi chuỗi này (vd sang "de-thi-02") khi đổi bộ câu hỏi cho chương khác,
+  // để "làm mới" giới hạn 1 lần/thiết bị đang lưu trên trình duyệt của mã đề cũ.
+  examId: "B01",
+
+  // Link Web App (Google Apps Script) để tự động gửi điểm về Google Sheet ngay khi SV nộp bài.
+  // Để trống "" nếu chưa thiết lập — công cụ vẫn chạy bình thường, chỉ không gửi điểm tự động.
+  scoreWebhookUrl: "https://script.google.com/macros/s/AKfycbxuH9oSwAMGKxJx-zpUENFElJgsHeTXS7jDLntofJXGUPGnExkz5qaMNvHk8rhm3OGj/exec",
+
+  // Nhãn buổi học, sẽ hiển thị trong cột "Buổi" của Google Sheet kết quả (vd "Buổi 2", "Buổi 7")
+  buoiHoc: "Buổi 1",
+};
+
+/* ============================================================
+   📋 NGÂN HÀNG CÂU HỎI — THAY NỘI DUNG TẠI ĐÂY CHO TỪNG CHƯƠNG
+   - type: "single"   → chỉ CÓ 1 đáp án đúng duy nhất (hiển thị dạng chọn 1 - radio)
+   - type: "multiple" → CÓ THỂ nhiều đáp án đúng (hiển thị dạng chọn nhiều - checkbox)
+   - options: mảng các lựa chọn (thứ tự sẽ được xáo trộn ngẫu nhiên khi hiển thị)
+   - correct: mảng CHỈ SỐ (bắt đầu từ 0) của (các) đáp án đúng, tính theo thứ tự
+              trong mảng "options" NGAY TẠI ĐÂY (chưa xáo trộn) — công cụ sẽ tự
+              theo dõi đáp án đúng đúng theo vị trí, dù đã xáo trộn thứ tự hiển thị.
+   Có thể thêm/bớt/sửa số lượng câu hỏi tùy ý.
+   ============================================================ */
+const QUESTIONS = [
+
+  {
+    type: "single",
+    question: "Rủi ro được định nghĩa là gì?",
+    options: ["Những sự kiện xảy ra ngoài kỳ vọng gây ảnh hưởng tiêu cực đến việc đạt được các mục tiêu của tổ chức", "Những sự kiện xảy ra đúng kỳ vọng và gây ảnh hưởng tích cực đến việc vận hành doanh nghiệp", "Những sự cố phá hoại hệ thống thông tin bắt buộc phải do con người cố ý thực hiện", "Sự suy giảm lợi nhuận của doanh nghiệp do các yếu tố cạnh tranh lành mạnh trên thị trường"],
+    correct: [0]
+  },
+
+  {
+    type: "single",
+    question: "Trong tuần làm việc đầu tiên, một nhân viên bán hàng mới do chưa được đào tạo kỹ về chính sách giá đã tính sai chiết khấu cho một khách hàng lớn, làm công ty thiệt hại doanh thu. Sự kiện này thuộc nguồn gốc rủi ro nào?",
+    options: ["Hành vi vô ý", "Hành vi cố ý", "Thảm họa thiên nhiên và chính trị", "Lỗi phần mềm và sự cố thiết bị"],
+    correct: [0]
+  },
+  
+  {
+    type: "single",
+    question: "Hành vi gian lận được định nghĩa là gì?",
+    options: ["Hành vi cố ý tuyên bố sai sự thật hoặc trình bày sai lệch một cách trọng yếu nhằm đạt được sự tin cậy của người khác, gây tổn thất cho cá nhân hoặc tổ chức", "Những sai sót ngẫu nhiên trong việc hạch toán kế toán gây ra sự sai lệch trên báo cáo tài chính", "Việc lạm dụng tài nguyên của tổ chức cho mục đích cá nhân nhưng không gây ra thiệt hại tài chính", "Những quyết định kinh doanh sai lầm của ban quản lý làm suy giảm giá trị cổ phiếu của công ty"],
+    correct: [0]
+  },
+ 
+  {
+    type: "single",
+    question: "Gian lận nghề nghiệp được phân loại gồm:",
+    options: ["Biển thủ tài sản, Gian lận báo cáo tài chính, Tham nhũng", "Gian lận đầu vào, gian lận xử lý, gian lận đầu ra", "Thảm họa thiên nhiên, lỗi phần mềm, hành vi cố ý", "Áp lực, Cơ hội, Sự hợp lý hóa"],
+    correct: [0]
+  },
+ 
+   {
+    type: "single",
+    question: "Ông Bình là Trưởng phòng mua sắm của một công ty sản xuất. Ông tự thành lập một công ty dịch vụ 'vỏ bọc' (đứng tên một người bạn), hàng tháng tự lập và duyệt các hóa đơn thanh toán cho dịch vụ tư vấn không có thực để chuyển tiền từ tài khoản công ty sang công ty này. Hành vi của ông Bình thuộc nhóm gian lận nào?",
+    options: ["Biển thủ tài sản", "Tham nhũng", "Gian lận báo cáo tài chính", "Gian lận hệ thống"],
+    correct: [1]
+  },
+  
+   {
+    type: "single",
+    question: "Theo lý thuyết tam giác gian lận, hành vi gian lận chỉ xảy ra khi hội tụ đủ 3 yếu tố nào sau đây?",
+    options: ["Áp lực, Cơ hội, Sự hợp lý hóa", "Áp lực tài chính, Lòng tham cá nhân, Lỗ hổng kiểm soát", "Áp lực công việc, Khả năng công nghệ, Sự thiếu trung thực", "Ý đồ xấu, Khả năng thực hiện, Sự biện hộ tâm lý"],
+    correct: [0]
+  },
+   
+   {
+    type: "single",
+    question: "Yếu tố nào sau đây thường là nguồn gốc của 'Áp lực đối với ban quản lý' dẫn đến gian lận báo cáo tài chính?",
+    options: ["Các chỉ tiêu hiệu suất và chương trình thưởng quá khắc nghiệt hoặc phi thực tế", "Áp lực nợ nần cá nhân do thói quen cờ bạc", "Sự oán giận do bị bỏ qua cơ hội thăng chức trong công ty", "Sự thiếu phân chia trách nhiệm giữa các phòng ban"],
+    correct: [0]
+  },
+   
+   {
+    type: "single",
+    question: "Theo báo cáo ACFE 2026, loại hình gian lận nghề nghiệp nào phổ biến nhất nhưng có mức thiệt hại trung bình thấp nhất?",
+    options: ["Biển thủ tài sản", "Tham nhũng", "Gian lận báo cáo tài chính", "Thông đồng"],
+    correct: [0]
+  },
+      
+   {
+    type: "multiple",
+    question: "Theo mô hình lý thuyết của Donald Cressey, một cơ hội hoàn chỉnh cho phép thủ phạm trục lợi thành công bắt buộc phải bao gồm những hoạt động nào sau đây?",
+    options: ["Trực tiếp thực hiện hành vi chiếm đoạt tài sản hoặc trình bày sai lệch thông tin", "Che giấu hành vi sai phạm bằng các thủ thuật kế toán để tránh bị hệ thống phát hiện", "Biện minh tâm lý để thuyết phục bản thân rằng hành vi đó là hoàn toàn hợp lý", "Chuyển đổi tài sản hoặc thông tin chiếm đoạt thành lợi ích cá nhân sử dụng được"],
+    correct: [0, 1, 3]
+  },
+      
+   {
+    type: "multiple",
+    question: "Theo Báo cáo ACFE 2026, nhận định nào sau đây là đúng khi nói về mối tương quan giữa chức vụ của thủ phạm và mức độ thiệt hại của các vụ gian lận nghề nghiệp?",
+    options: ["Các vụ gian lận do nhân viên và cấp quản lý thực hiện là phổ biến nhất, mỗi nhóm đều chiếm 41% trong tổng số ca được báo cáo", "Gian lận do nhóm chủ sở hữu/giám đốc điều hành thực hiện ít phổ biến nhất (chỉ chiếm 16% số ca) nhưng lại gây ra mức thiệt hại trung bình lớn nhất", "Nhóm nhân viên gây ra mức thiệt hại trung bình là 125.000 USD do có ưu thế tiếp cận hệ thống nhập liệu hàng ngày", "Có mối liên hệ tỷ lệ thuận rõ rệt giữa cấp bậc chức vụ của thủ phạm với mức độ tổn thất tài chính: thủ phạm có cấp bậc quản lý càng cao thì thiệt hại gây ra cho doanh nghiệp càng khốc liệt"],
+    correct: [0, 1, 3]
+  }
+];
+
+/* ============================================================
+   ⚠️  TỪ ĐÂY TRỞ XUỐNG LÀ MÃ VẬN HÀNH CÔNG CỤ — KHÔNG CẦN CHỈNH SỬA
+   ============================================================ */
+function $(sel){ return document.querySelector(sel); }
+
+const state = {
+  student: null,
+  shuffled: [],
+  userAnswers: [],
+  currentIndex: 0,
+  timerHandle: null,
+  timeLeft: 0,
+  examInProgress: false,
+  finishedAt: null,
+  fullscreenSupported: false,
+  endingIntentionally: false,
+};
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('#screen-' + name).classList.add('active');
+}
+
+function shuffleArray(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function deviceKey(){ return "examStatus_" + CONFIG.examId; }
+
+function setDeviceStatus(status, reason, score, time){
+  if (CONFIG.allowMultipleAttempts) return;
+  const data = {
+    status: status,
+    reason: reason || null,
+    score: (score !== undefined ? score : null),
+    time: (time ? time.toISOString() : new Date().toISOString())
+  };
+  try { localStorage.setItem(deviceKey(), JSON.stringify(data)); } catch(e){}
+}
+
+function getDeviceStatus(){
+  try {
+    const raw = localStorage.getItem(deviceKey());
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){ return null; }
+}
+
+function submitScore(lop,mssv, hoten, buoi, diem){
+  if (!CONFIG.scoreWebhookUrl) return;
+  try {
+    fetch(CONFIG.scoreWebhookUrl, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({lop:lop, mssv: mssv, hoten: hoten, buoi: buoi, diem: diem })
+    });
+  } catch(e){console.error("Lỗi gửi điểm:", e);}
+}
+
+function formatDateTime(d){
+  const pad = n => String(n).padStart(2, '0');
+  return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ' - ' + pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear();
+}
+
+function formatScore(s){
+  return (Math.round(s * 100) / 100).toString().replace('.', ',');
+}
+
+function renderInfoTable(sel, rows){
+  const table = $(sel);
+  table.innerHTML = '';
+  rows.forEach(([k, v]) => {
+    const tr = document.createElement('tr');
+    const th = document.createElement('th'); th.textContent = k;
+    const td = document.createElement('td'); td.textContent = v;
+    tr.appendChild(th); tr.appendChild(td);
+    table.appendChild(tr);
+  });
+}
+
+/* ---------- Bảo mật / chống gian lận (best-effort, phía trình duyệt) ---------- */
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+
+document.addEventListener('keydown', function(e){
+  const k = e.key;
+  const ctrl = e.ctrlKey || e.metaKey;
+  if (k === 'F12'){ e.preventDefault(); return; }
+  if (ctrl && e.shiftKey && ['I','J','C','i','j','c'].indexOf(k) !== -1){ e.preventDefault(); return; }
+  if (ctrl && ['u','s','p','U','S','P'].indexOf(k) !== -1){ e.preventDefault(); return; }
+});
+
+window.addEventListener('keyup', function(e){
+  if (e.key === 'PrintScreen' && state.examInProgress){
+    lockExam('Phát hiện thao tác chụp màn hình (phím Print Screen).');
+  }
+});
+
+document.addEventListener('visibilitychange', function(){
+  if (state.examInProgress && document.hidden){
+    lockExam('Phát hiện chuyển tab, chuyển ứng dụng hoặc thu nhỏ cửa sổ trong khi làm bài.');
+  }
+});
+
+function onFullscreenChange(){
+  const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+  if (state.examInProgress && state.fullscreenSupported && !state.endingIntentionally && !fsEl){
+    lockExam('Phát hiện thoát chế độ toàn màn hình trong khi làm bài.');
+  }
+}
+document.addEventListener('fullscreenchange', onFullscreenChange);
+document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+
+window.addEventListener('beforeunload', function(e){
+  if (state.examInProgress){
+    setDeviceStatus('locked', 'Thoát khỏi bài làm giữa chừng (đóng hoặc tải lại trang) trước khi hoàn tất.');
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+function enterFullscreenSafe(){
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if (req){
+    state.fullscreenSupported = true;
+    try {
+      const p = req.call(el);
+      if (p && p.catch) p.catch(function(){ state.fullscreenSupported = false; });
+    } catch(e){ state.fullscreenSupported = false; }
+  } else {
+    state.fullscreenSupported = false;
+  }
+}
+
+function exitFullscreenSafe(){
+  state.endingIntentionally = true;
+  const ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+  const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+  if (fsEl && ex){
+    try {
+      const p = ex.call(document);
+      if (p && p.catch) p.catch(function(){});
+    } catch(e){}
+  }
+  setTimeout(function(){ state.endingIntentionally = false; }, 400);
+}
+
+/* ---------- Luồng đăng ký / mật khẩu ---------- */
+document.addEventListener('DOMContentLoaded', function(){
+  $('#rule-time').textContent = CONFIG.timePerQuestion;
+  $('#rule-count').textContent = QUESTIONS.length;
+  if (!CONFIG.allowManualNext){ $('#btn-next').style.display = 'none'; }
+
+  if (!CONFIG.allowMultipleAttempts){
+    const existing = getDeviceStatus();
+    if (existing && ['completed','locked','in_progress'].indexOf(existing.status) !== -1){
+      showBlockedScreen(existing);
+      return;
+    }
+  } else {
+    $('#rule-once-line').style.display = 'none';
+    $('#preview-badge').hidden = false;
+  }
+  showScreen('info');
+});
+
+function showBlockedScreen(data){
+  showScreen('blocked');
+  let title, msg;
+  if (data.status === 'completed'){
+    title = 'Bạn đã hoàn thành bài thi này';
+    msg = 'Thiết bị này đã ghi nhận bài làm hoàn tất lúc ' + formatDateTime(new Date(data.time)) + '. Mỗi thiết bị chỉ được làm bài 1 lần duy nhất.';
+  } else {
+    title = 'Không thể truy cập bài thi';
+    msg = 'Thiết bị này đã bị khóa hoặc phiên làm bài trước đó đã bị gián đoạn (' + (data.reason || 'phiên làm bài trước đã kết thúc bất thường') + '). Vui lòng liên hệ giảng viên nếu cần hỗ trợ.';
+  }
+  $('#blocked-title').textContent = title;
+  $('#blocked-message').textContent = msg;
+}
+
+$('#form-info').addEventListener('submit', function(e){
+  e.preventDefault();
+  state.student = {
+    lop: $('#input-lop').value.trim(),
+    mssv: $('#input-mssv').value.trim(),
+    hoten: $('#input-hoten').value.trim(),
+  };
+  showScreen('password');
+});
+
+$('#btn-back-info').addEventListener('click', function(){ showScreen('info'); });
+
+$('#form-password').addEventListener('submit', function(e){
+  e.preventDefault();
+  const val = $('#input-password').value;
+  if (val === CONFIG.password){
+    $('#password-error').hidden = true;
+    showScreen('instructions');
+  } else {
+    $('#password-error').hidden = false;
+  }
+});
+
+$('#btn-start-exam').addEventListener('click', startExam);
+$('#btn-next').addEventListener('click', goNext);
+
+/* ---------- Làm bài ---------- */
+function startExam(){
+  enterFullscreenSafe();
+
+  state.shuffled = shuffleArray(QUESTIONS).map(function(q){
+    const idxs = q.options.map(function(_, i){ return i; });
+    const shuffledIdxs = shuffleArray(idxs);
+    const correctSet = new Set(q.correct);
+    const newOptions = shuffledIdxs.map(function(i){ return q.options[i]; });
+    const newCorrect = [];
+    shuffledIdxs.forEach(function(origIdx, newIdx){
+      if (correctSet.has(origIdx)) newCorrect.push(newIdx);
+    });
+    return { type: q.type, question: q.question, options: newOptions, correct: new Set(newCorrect) };
+  });
+
+  state.userAnswers = state.shuffled.map(function(){ return new Set(); });
+  state.currentIndex = 0;
+  state.examInProgress = true;
+  setDeviceStatus('in_progress');
+
+  $('#student-chip-exam').textContent = state.student.mssv + ' · ' + state.student.hoten;
+
+  showScreen('exam');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = state.shuffled[state.currentIndex];
+  $('#exam-progress').textContent = 'Câu ' + (state.currentIndex + 1) + ' / ' + state.shuffled.length;
+  $('#question-type-tag').textContent = q.type === 'single' ? 'Chọn 1 đáp án đúng' : 'Chọn tất cả đáp án đúng';
+  $('#question-text').textContent = q.question;
+
+  const list = $('#options-list');
+  list.innerHTML = '';
+  q.options.forEach(function(opt, idx){
+    const row = document.createElement('label');
+    row.className = 'option-row';
+    const input = document.createElement('input');
+    input.type = q.type === 'single' ? 'radio' : 'checkbox';
+    input.name = 'opt';
+    input.value = idx;
+    const span = document.createElement('span');
+    span.textContent = opt;
+    row.appendChild(input);
+    row.appendChild(span);
+    input.addEventListener('change', function(){ toggleAnswer(idx, q.type); });
+    list.appendChild(row);
+  });
+
+  startTimerForQuestion();
+}
+
+function toggleAnswer(idx, type){
+  const set = state.userAnswers[state.currentIndex];
+  if (type === 'single'){
+    set.clear();
+    set.add(idx);
+  } else {
+    if (set.has(idx)) set.delete(idx); else set.add(idx);
+  }
+}
+
+function startTimerForQuestion(){
+  clearInterval(state.timerHandle);
+  state.timeLeft = CONFIG.timePerQuestion;
+  updateTimerUI();
+  state.timerHandle = setInterval(function(){
+    state.timeLeft--;
+    updateTimerUI();
+    if (state.timeLeft <= 0){
+      clearInterval(state.timerHandle);
+      goNext();
+    }
+  }, 1000);
+}
+
+function updateTimerUI(){
+  $('#timer-number').textContent = state.timeLeft;
+  const circumference = 2 * Math.PI * 26;
+  const pct = Math.max(state.timeLeft, 0) / CONFIG.timePerQuestion;
+  const ring = $('#ring-fg');
+  ring.style.strokeDasharray = circumference;
+  ring.style.strokeDashoffset = circumference * (1 - pct);
+  ring.classList.toggle('ring-critical', state.timeLeft <= 5);
+}
+
+function goNext(){
+  if (!state.examInProgress) return;
+  clearInterval(state.timerHandle);
+  state.currentIndex++;
+  if (state.currentIndex >= state.shuffled.length){
+    finishExam();
+  } else {
+    renderQuestion();
+  }
+}
+
+function computeScore(){
+  let correctCount = 0;
+  state.shuffled.forEach(function(q, i){
+    const user = state.userAnswers[i];
+    const correct = q.correct;
+    let isCorrect = user.size === correct.size;
+    if (isCorrect){
+      for (const v of user){ if (!correct.has(v)){ isCorrect = false; break; } }
+    }
+    if (isCorrect) correctCount++;
+  });
+  return { correctCount: correctCount, total: state.shuffled.length };
+}
+
+function finishExam(){
+  state.examInProgress = false;
+  state.finishedAt = new Date();
+  exitFullscreenSafe();
+
+  const result = computeScore();
+  const score = (result.correctCount / result.total) * 10;
+  setDeviceStatus('completed', null, score, state.finishedAt);
+  submitScore(state.student.lop,state.student.mssv, state.student.hoten, CONFIG.buoiHoc, score);
+
+  showScreen('result');
+  $('#score-value').textContent = formatScore(score);
+  const circumference = 2 * Math.PI * 52;
+  const ringScore = $('#ring-fg-score');
+  ringScore.style.strokeDasharray = circumference;
+  ringScore.style.strokeDashoffset = circumference * (1 - score / 10);
+
+  renderInfoTable('#result-info-table', [
+    ['Lớp học phần', state.student.lop],
+    ['MSSV', state.student.mssv],
+    ['Họ và tên', state.student.hoten],
+    ['Thời gian nộp bài', formatDateTime(state.finishedAt)],
+  ]);
+}
+
+function lockExam(reason){
+  if (!state.examInProgress) return;
+  state.examInProgress = false;
+  clearInterval(state.timerHandle);
+  const now = new Date();
+  setDeviceStatus('locked', reason, null, now);
+  exitFullscreenSafe();
+
+  showScreen('locked');
+  $('#locked-reason').textContent = reason;
+  renderInfoTable('#locked-info-table', [
+    ['Lớp học phần', state.student ? state.student.lop : ''],
+    ['MSSV', state.student ? state.student.mssv : ''],
+    ['Họ và tên', state.student ? state.student.hoten : ''],
+    ['Thời điểm khóa', formatDateTime(now)],
+  ]);
+}
+</script>
+</body>
+</html>
