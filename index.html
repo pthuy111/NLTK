@@ -251,6 +251,7 @@
     font-size:15px;
     line-height:1.45;
     transition:border-color .15s, background .15s;
+    white-space: pre-line;
   }
   .option-row:hover{border-color:var(--ink-soft);}
   .option-row input{margin-top:3px; width:18px; height:18px; accent-color:var(--ink); flex-shrink:0;}
@@ -456,10 +457,10 @@
    ============================================================ */
 const CONFIG = {
   // Mật khẩu để sinh viên truy cập bài làm (giảng viên cung cấp cho SV trong buổi thi)
-  password: "0808",
+  password: "2468",
 
   // Thời gian tối đa cho MỖI câu hỏi (đơn vị: giây)
-  timePerQuestion: 45,
+  timePerQuestion: 40,
 
   // true = sinh viên có thể bấm "Câu tiếp theo" để qua câu sớm nếu đã trả lời xong
   //        (vẫn tự động chuyển câu khi hết giờ dù có bấm hay không)
@@ -472,14 +473,14 @@ const CONFIG = {
 
   // Mã đề: đổi chuỗi này (vd sang "de-thi-02") khi đổi bộ câu hỏi cho chương khác,
   // để "làm mới" giới hạn 1 lần/thiết bị đang lưu trên trình duyệt của mã đề cũ.
-  examId: "B01",
+  examId: "B02",
 
   // Link Web App (Google Apps Script) để tự động gửi điểm về Google Sheet ngay khi SV nộp bài.
   // Để trống "" nếu chưa thiết lập — công cụ vẫn chạy bình thường, chỉ không gửi điểm tự động.
   scoreWebhookUrl: "https://script.google.com/macros/s/AKfycbxuH9oSwAMGKxJx-zpUENFElJgsHeTXS7jDLntofJXGUPGnExkz5qaMNvHk8rhm3OGj/exec",
 
   // Nhãn buổi học, sẽ hiển thị trong cột "Buổi" của Google Sheet kết quả (vd "Buổi 2", "Buổi 7")
-  buoiHoc: "Buổi 1",
+  buoiHoc: "Buổi 2",
 };
 
 /* ============================================================
@@ -493,75 +494,115 @@ const CONFIG = {
    Có thể thêm/bớt/sửa số lượng câu hỏi tùy ý.
    ============================================================ */
 const QUESTIONS = [
-
   {
     type: "single",
-    question: "Rủi ro được định nghĩa là gì?",
-    options: ["Những sự kiện xảy ra ngoài kỳ vọng gây ảnh hưởng tiêu cực đến việc đạt được các mục tiêu của tổ chức", "Những sự kiện xảy ra đúng kỳ vọng và gây ảnh hưởng tích cực đến việc vận hành doanh nghiệp", "Những sự cố phá hoại hệ thống thông tin bắt buộc phải do con người cố ý thực hiện", "Sự suy giảm lợi nhuận của doanh nghiệp do các yếu tố cạnh tranh lành mạnh trên thị trường"],
-    correct: [0]
+    question: "Bộ phận chăm sóc khách hàng của một ứng dụng mua sắm trực tuyến thu thập thông tin từ người dùng để cải thiện dịch vụ. Biến số nào sau đây thuộc loại biến định tính?",
+    options: [
+      "Tổng số tiền khách hàng đã chi tiêu trong tháng vừa qua.",
+      "Số lần khách hàng nhấn nút 'Mua ngay' trên ứng dụng trong một tuần",
+      "Phương thức thanh toán ưa thích của khách hàng",
+      "Khoảng cách địa lý (km) từ kho giao hàng đến địa chỉ giao hàng của khách hàng"
+    ],
+    correct: [2]
   },
-
   {
     type: "single",
-    question: "Trong tuần làm việc đầu tiên, một nhân viên bán hàng mới do chưa được đào tạo kỹ về chính sách giá đã tính sai chiết khấu cho một khách hàng lớn, làm công ty thiệt hại doanh thu. Sự kiện này thuộc nguồn gốc rủi ro nào?",
-    options: ["Hành vi vô ý", "Hành vi cố ý", "Thảm họa thiên nhiên và chính trị", "Lỗi phần mềm và sự cố thiết bị"],
+    question: "Một cửa hàng tiện lợi tiến hành kiểm kho và thống kê tình hình kinh doanh vào cuối ngày. Chỉ tiêu nào dưới đây là ví dụ về biến định lượng rời rạc?",
+    options: [
+      "Tổng số lượng chai nước ngọt bán ra trong ngày",
+      "Thể tích thực tế của một chai nước ngọt ngẫu nhiên trên kệ",
+      "Nhiệt độ của tủ bảo quản nước ngọt vào lúc 12 giờ trưa",
+      "Nhãn hiệu của các chai nước ngọt đang trưng bày"
+    ],
     correct: [0]
   },
-  
   {
     type: "single",
-    question: "Hành vi gian lận được định nghĩa là gì?",
-    options: ["Hành vi cố ý tuyên bố sai sự thật hoặc trình bày sai lệch một cách trọng yếu nhằm đạt được sự tin cậy của người khác, gây tổn thất cho cá nhân hoặc tổ chức", "Những sai sót ngẫu nhiên trong việc hạch toán kế toán gây ra sự sai lệch trên báo cáo tài chính", "Việc lạm dụng tài nguyên của tổ chức cho mục đích cá nhân nhưng không gây ra thiệt hại tài chính", "Những quyết định kinh doanh sai lầm của ban quản lý làm suy giảm giá trị cổ phiếu của công ty"],
-    correct: [0]
-  },
- 
-  {
-    type: "single",
-    question: "Gian lận nghề nghiệp được phân loại gồm:",
-    options: ["Biển thủ tài sản, Gian lận báo cáo tài chính, Tham nhũng", "Gian lận đầu vào, gian lận xử lý, gian lận đầu ra", "Thảm họa thiên nhiên, lỗi phần mềm, hành vi cố ý", "Áp lực, Cơ hội, Sự hợp lý hóa"],
-    correct: [0]
-  },
- 
-   {
-    type: "single",
-    question: "Ông Bình là Trưởng phòng mua sắm của một công ty sản xuất. Ông tự thành lập một công ty dịch vụ 'vỏ bọc' (đứng tên một người bạn), hàng tháng tự lập và duyệt các hóa đơn thanh toán cho dịch vụ tư vấn không có thực để chuyển tiền từ tài khoản công ty sang công ty này. Hành vi của ông Bình thuộc nhóm gian lận nào?",
-    options: ["Biển thủ tài sản", "Tham nhũng", "Gian lận báo cáo tài chính", "Gian lận hệ thống"],
+    question: "Một doanh nghiệp logistics đo lường hiệu quả vận hành của đội xe đầu kéo chở hàng. Biến số nào dưới đây là biến định lượng liên tục?",
+    options: [
+      "Số chuyến hàng mỗi tài xế hoàn thành trong tuần",
+      "Lượng dầu diesel thực tế mà xe tiêu thụ trên mỗi 100 km hành trình",
+      "Số lượng lốp xe dự phòng đang được trang bị trên mỗi chiếc xe tải",
+      "Mã số định danh ID của tài xế được ghi nhận trên hệ thống GPS"
+    ],
     correct: [1]
   },
-  
-   {
+  {
     type: "single",
-    question: "Theo lý thuyết tam giác gian lận, hành vi gian lận chỉ xảy ra khi hội tụ đủ 3 yếu tố nào sau đây?",
-    options: ["Áp lực, Cơ hội, Sự hợp lý hóa", "Áp lực tài chính, Lòng tham cá nhân, Lỗ hổng kiểm soát", "Áp lực công việc, Khả năng công nghệ, Sự thiếu trung thực", "Ý đồ xấu, Khả năng thực hiện, Sự biện hộ tâm lý"],
+    question: "Trong một phiếu khảo sát ý kiến người tiêu dùng về dịch vụ giao hàng, nhóm nghiên cứu ghi nhận thông tin về Mã bưu chính nơi cư trú của khách hàng. Biến số 'Mã bưu chính của khách hàng' (ví dụ: 70000, 10000) được đo lường bằng loại thang đo nào?",
+    options: [
+      "Thang đo định danh vì các con số này chỉ đóng vai trò làm nhãn nhận diện",
+      "Thang đo thứ bậc vì mã bưu chính lớn hơn cho biết khu vực đó có quy mô dân số lớn hơn",
+      "Thang đo khoảng vì có thể thực hiện phép cộng trừ giữa các mã bưu chính",
+      "Thang đo tỷ lệ vì mã bưu chính là các con số có thể dùng để tính trung bình cộng"
+    ],
     correct: [0]
   },
-   
-   {
+  {
     type: "single",
-    question: "Yếu tố nào sau đây thường là nguồn gốc của 'Áp lực đối với ban quản lý' dẫn đến gian lận báo cáo tài chính?",
-    options: ["Các chỉ tiêu hiệu suất và chương trình thưởng quá khắc nghiệt hoặc phi thực tế", "Áp lực nợ nần cá nhân do thói quen cờ bạc", "Sự oán giận do bị bỏ qua cơ hội thăng chức trong công ty", "Sự thiếu phân chia trách nhiệm giữa các phòng ban"],
+    question: "Phòng đào tạo quản lý hồ sơ sinh viên và ghi nhận ba chỉ tiêu sau: (1) Thứ hạng tốt nghiệp của sinh viên. (2) Điểm số bài thi chuẩn hóa SAT Toán của sinh viên. (3) Tổng số tiền học phí sinh viên đã đóng trong học kỳ. Ba chỉ tiêu trên lần lượt được đo lường bằng những loại thang đo nào?",
+    options: [
+      "Thứ bậc, khoảng, tỷ lệ",
+      "Định danh, khoảng, tỷ lệ",
+      "Thứ bậc, tỷ lệ, khoảng",
+      "Định danh, tỷ lệ, khoảng"
+    ],
     correct: [0]
   },
-   
-   {
+  {
     type: "single",
-    question: "Theo báo cáo ACFE 2026, loại hình gian lận nghề nghiệp nào phổ biến nhất nhưng có mức thiệt hại trung bình thấp nhất?",
-    options: ["Biển thủ tài sản", "Tham nhũng", "Gian lận báo cáo tài chính", "Thông đồng"],
+    question: "Giả sử bạn có một bộ dữ liệu về điểm thi với giá trị lớn nhất là 95 và giá trị nhỏ nhất là 41. Bạn muốn xây dựng một bảng phân phối tần số gồm 5 tổ. Theo quy tắc thực nghiệm thống kê, độ rộng tổ được lựa chọn sẽ là bao nhiêu?",
+    options: [
+      "11",
+      "10,8",
+      "10",
+      "12"
+    ],
     correct: [0]
   },
-      
-   {
+  {
+    type: "single",
+    question: "Một tổ trong bảng phân phối tần số có giới hạn là [30 – 39]. Trị số giữa (hay giá trị đại diện - Mi) của tổ này là bao nhiêu?",
+    options: [
+      "34,5",
+      "34",
+      "35",
+      "39"
+    ],
+    correct: [0]
+  },
+  {
+    type: "single",
+    question: "Tại một tổ bất kỳ trong bảng phân phối tần số tích lũy, giá trị của cột Tần số tích lũy cho biết điều gì?",
+    options: [
+      "Số lượng quan sát trong mẫu có giá trị nhỏ hơn hoặc bằng giới hạn trên của tổ đó",
+      "Số lượng quan sát trong tổ đó",
+      "Tỷ lệ phần trăm của tổ đó so với toàn bộ mẫu",
+      "Tổng giá trị của tất cả các quan sát cộng lại trong tổ"
+    ],
+    correct: [0]
+  },
+  {
+    type: "single",
+    question: "Trong một bảng phân phối tần số và tần suất tích lũy hoàn chỉnh cho một mẫu có kích thước là n, giá trị của tần số tích lũy và tần suất tích lũy tại tổ cuối cùng luôn luôn bằng bao nhiêu?",
+    options: [
+      "Bằng cỡ mẫu n và 100%",
+      "Bằng 100% và tần số lớn nhất của bảng",
+      "Bằng tần số lớn nhất và tần suất lớn nhất của bảng",
+      "Luôn thay đổi và không thể xác định trước"
+    ],
+    correct: [0]
+  },
+  {
     type: "multiple",
-    question: "Theo mô hình lý thuyết của Donald Cressey, một cơ hội hoàn chỉnh cho phép thủ phạm trục lợi thành công bắt buộc phải bao gồm những hoạt động nào sau đây?",
-    options: ["Trực tiếp thực hiện hành vi chiếm đoạt tài sản hoặc trình bày sai lệch thông tin", "Che giấu hành vi sai phạm bằng các thủ thuật kế toán để tránh bị hệ thống phát hiện", "Biện minh tâm lý để thuyết phục bản thân rằng hành vi đó là hoàn toàn hợp lý", "Chuyển đổi tài sản hoặc thông tin chiếm đoạt thành lợi ích cá nhân sử dụng được"],
-    correct: [0, 1, 3]
-  },
-      
-   {
-    type: "multiple",
-    question: "Theo Báo cáo ACFE 2026, nhận định nào sau đây là đúng khi nói về mối tương quan giữa chức vụ của thủ phạm và mức độ thiệt hại của các vụ gian lận nghề nghiệp?",
-    options: ["Các vụ gian lận do nhân viên và cấp quản lý thực hiện là phổ biến nhất, mỗi nhóm đều chiếm 41% trong tổng số ca được báo cáo", "Gian lận do nhóm chủ sở hữu/giám đốc điều hành thực hiện ít phổ biến nhất (chỉ chiếm 16% số ca) nhưng lại gây ra mức thiệt hại trung bình lớn nhất", "Nhóm nhân viên gây ra mức thiệt hại trung bình là 125.000 USD do có ưu thế tiếp cận hệ thống nhập liệu hàng ngày", "Có mối liên hệ tỷ lệ thuận rõ rệt giữa cấp bậc chức vụ của thủ phạm với mức độ tổn thất tài chính: thủ phạm có cấp bậc quản lý càng cao thì thiệt hại gây ra cho doanh nghiệp càng khốc liệt"],
-    correct: [0, 1, 3]
+    question: "Những phát biểu nào sau đây là đúng về các loại biến số?",
+    options: [
+      "Biến định lượng rời rạc chỉ nhận các giá trị số có thể đếm được",
+      "Biến định lượng liên tục có thể nhận vô số giá trị trên một khoảng và không có khoảng cách giữa các giá trị dữ liệu có thể thu được",
+      "Dữ liệu định lượng cho biết thông tin về mức độ/số lượng và luôn luôn thu được từ việc sử dụng thang đo khoảng hoặc thang đo tỷ lệ",
+      "Biến định tính chỉ dùng để ghi nhận các nhãn hoặc tên danh mục và không bao giờ được mã hóa bằng các con số trong thực tế dữ liệu"
+    ],
+    correct: [0, 1, 2]
   }
 ];
 
