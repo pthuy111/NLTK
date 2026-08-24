@@ -494,7 +494,7 @@
    ============================================================ */
 const CONFIG = {
   // Mật khẩu để sinh viên truy cập bài làm (giảng viên cung cấp cho SV trong buổi thi)
-  password: "0819",
+  password: "0826",
 
   // Thời gian tối đa cho MỖI câu hỏi (đơn vị: giây)
   timePerQuestion: 40,
@@ -517,7 +517,7 @@ const CONFIG = {
   scoreWebhookUrl: "https://script.google.com/macros/s/AKfycbxuH9oSwAMGKxJx-zpUENFElJgsHeTXS7jDLntofJXGUPGnExkz5qaMNvHk8rhm3OGj/exec",
 
   // Nhãn buổi học, sẽ hiển thị trong cột "Buổi" của Google Sheet kết quả (vd "Buổi 2", "Buổi 7")
-  buoiHoc: "Buổi 3",
+  buoiHoc: "Buổi 4",
 
   // Danh sách LỚP HỌC PHẦN để sinh viên chọn ở màn hình đầu tiên (thay vì gõ tay).
   // Sửa danh sách bên dưới cho đúng với các lớp bạn đang dạy — mỗi lớp 1 dòng,
@@ -655,6 +655,37 @@ const QUESTIONS = [
     correct: [0, 1]
   },
 
+{
+    type: "single",
+    question: "Một mẫu dữ liệu nhỏ thu thập ngẫu nhiên gồm 3 quan sát: 2, 4, 6. Phương sai và Độ lệch chuẩn của mẫu số liệu này lần lượt là:",
+    options: [
+"4,00 ; 2,00",
+"8,00 ; 2,83",
+"2,67 ; 1,63",
+"2,00 ; 1,41"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Trong các chỉ số xác định vị trí tương đối, giá trị Tứ phân vị thứ ba ($Q_3$) được định nghĩa chính xác là gì?",
+    options: [
+"Là giá trị tương đương với phân vị thứ 75 ($P_{75}$), phân tách 75% giá trị nhỏ nhất từ dưới lên và 25% giá trị lớn nhất từ trên xuống của tập dữ liệu đã sắp xếp",
+"Là giá trị phân chia tập dữ liệu đã sắp xếp thành hai phần bằng nhau",
+"Là giá trị tương đương với phân vị thứ 25 ($P_{25}$), phân tách 25% giá trị nhỏ nhất của dữ liệu",
+"Là hiệu số giữa giá trị lớn nhất và giá trị nhỏ nhất của 50% lượng dữ liệu lõi ở giữa"],
+    correct: [0]
+  },
+{
+    type: "single",
+    question: "Cho mẫu số liệu thô đã được sắp xếp tăng dần như sau: 5, 6, 12, 13, 15, 18, 22, 50. Theo quy tắc hàng rào Tukey sử dụng khoảng tứ phân vị (IQR), tập dữ liệu này có chứa giá trị ngoại lệ nào không?",
+    options: [
+"Có một giá trị ngoại lệ duy nhất là 50",
+"Không có giá trị ngoại lệ nào",
+"Có một giá trị ngoại lệ duy nhất là 5",
+"Có hai giá trị ngoại lệ là 5 và 50"],
+    correct: [0]
+  },
 ];
 
 /* ============================================================
