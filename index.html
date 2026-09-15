@@ -494,10 +494,10 @@
    ============================================================ */
 const CONFIG = {
   // Mật khẩu để sinh viên truy cập bài làm (giảng viên cung cấp cho SV trong buổi thi)
-  password: "0826",
+  password: "1208",
 
   // Thời gian tối đa cho MỖI câu hỏi (đơn vị: giây)
-  timePerQuestion: 40,
+  timePerQuestion: 45,
 
   // true = sinh viên có thể bấm "Câu tiếp theo" để qua câu sớm nếu đã trả lời xong
   //        (vẫn tự động chuyển câu khi hết giờ dù có bấm hay không)
@@ -510,14 +510,14 @@ const CONFIG = {
 
   // Mã đề: đổi chuỗi này (vd sang "de-thi-02") khi đổi bộ câu hỏi cho chương khác,
   // để "làm mới" giới hạn 1 lần/thiết bị đang lưu trên trình duyệt của mã đề cũ.
-  examId: "B04",
+  examId: "B06",
 
   // Link Web App (Google Apps Script) để tự động gửi điểm về Google Sheet ngay khi SV nộp bài.
   // Để trống "" nếu chưa thiết lập — công cụ vẫn chạy bình thường, chỉ không gửi điểm tự động.
   scoreWebhookUrl: "https://script.google.com/macros/s/AKfycbxuH9oSwAMGKxJx-zpUENFElJgsHeTXS7jDLntofJXGUPGnExkz5qaMNvHk8rhm3OGj/exec",
 
   // Nhãn buổi học, sẽ hiển thị trong cột "Buổi" của Google Sheet kết quả (vd "Buổi 2", "Buổi 7")
-  buoiHoc: "Buổi 4",
+  buoiHoc: "Buổi 6",
 
   // Danh sách LỚP HỌC PHẦN để sinh viên chọn ở màn hình đầu tiên (thay vì gõ tay).
   // Sửa danh sách bên dưới cho đúng với các lớp bạn đang dạy — mỗi lớp 1 dòng,
@@ -527,7 +527,6 @@ const CONFIG = {
     "DHLOG21C",
     "DHDIGITAL21A_TCTA",
     "DHDIGITAL21C_TCTA",
-    "DH18TT_HL",
   ],
 };
 
@@ -545,147 +544,227 @@ const CONFIG = {
    bên dưới rồi sửa nội dung.
    ============================================================ */
 const QUESTIONS = [
- {
+
+{
     type: "single",
-    question: "Một cửa hàng xe máy muốn báo cáo tỷ lệ phần trăm thị phần doanh số bán ra của 5 dòng xe (Xe ga, Xe số, Xe côn tay, Xe điện, Xe phân khối lớn) trong tháng qua để trình bày trực quan trong cuộc họp cổ đông. Loại đồ thị nào dưới đây là phù hợp nhất?",
+    question: "Bảng phân phối tần số không có khoảng cách tổ thường được sử dụng khi nào?",
     options: [
-"Biểu đồ tròn (Pie chart) ",
-"Biểu đồ phân phối tần số (Histogram) ", 
-"Đồ thị phân tán (Scatter plot) ", 
+"Biến định lượng rời rạc, số giá trị khác nhau không nhiều",
+"Biến định tính có nhiều danh mục",
+"Biến định lượng liên tục có khoảng biến thiên lớn",
+"Dữ liệu có chứa giá trị cực đoan quá lớn hoặc quá nhỏ"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Với bảng phân phối tần số có khoảng cách tổ không đều, khi xác định tổ chứa yếu vị cần thay tần số bằng chỉ tiêu nào?",
+    options: [
+"Mật độ tần số",
+"Tần suất tích lũy",
+"Trị số giữa",
+"Tần số tích lũy"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Để so sánh tỷ trọng giữa một số ít nhóm của biến định tính, loại biểu đồ nào phù hợp nhất?",
+    options: [
+"Biểu đồ tròn (Pie chart)",
+"Biểu đồ phân phối tần số (Histogram)",
+"Đồ thị phân tán (Scatter plot)",
 "Biểu đồ nhánh - lá (Stem-and-leaf plot)"],
     correct: [0]
   },
 
 {
     type: "single",
-    question: "Trạm y tế trường IUH đo chiều cao thực tế của 500 tân sinh viên để đánh giá thể trạng chung và muốn xem hình dáng phân bố chiều cao của sinh viên có đối xứng hay không. Đồ thị nào dưới đây được sử dụng để trực quan hóa hình dáng phân phối này?",
+    question: "Đặc điểm nào sau đây đúng với biểu đồ phân phối tần số (Histogram)?",
     options: [
-"Biểu đồ phân phối tần số (Histogram)",
-"Biểu đồ cột (Bar chart) ", 
-"Biểu đồ tròn (Pie chart)", 
-"Đồ thị phân tán (Scatter plot)"],
+"Các cột vẽ liền kề nhau, mỗi cột đại diện cho một khoảng giá trị của biến định lượng",
+"Dùng cho biến định tính, các cột cách nhau",
+"Các cột được sắp xếp theo tần số giảm dần",
+"Mỗi quan sát được biểu diễn bằng một cặp tọa độ (x, y)"],
     correct: [0]
   },
 
 {
     type: "single",
-    question: "Chỉ tiêu đo xu hướng trung tâm được sử dụng trong phân tích dữ liệu nhằm trả lời câu hỏi cốt lõi nào dưới đây?",
+    question: "Khi tập dữ liệu có giá trị ngoại lai rất lớn, đại lượng nào nên được ưu tiên sử dụng để đo xu hướng trung tâm?",
     options: [
-"Đâu là giá trị 'điển hình' có khả năng đại diện cho toàn bộ tập dữ liệu?",
-"Mức độ biến động và sai lệch của dữ liệu so với mức trung bình là bao nhiêu?", 
-"Một giá trị dữ liệu cụ thể đứng ở vị trí thứ mấy so với các phần tử khác trong nhóm?", 
-"Có bao nhiêu giá trị ngoại lệ (outliers) đang tồn tại trong tập dữ liệu thô?"],
+"Trung vị",
+"Trung bình cộng",
+"Khoảng biến thiên",
+"Độ lệch chuẩn"],
     correct: [0]
   },
 
 {
     type: "single",
-    question: "Khi tập dữ liệu xuất hiện các giá trị bất thường, chỉ số đo xu hướng trung tâm nào sẽ dễ bị bóp méo nhất; và chỉ số nào giữ được tính bền vững?",
+    question: "Để tính tốc độ tăng trưởng bình quân qua nhiều năm liên tiếp, nên sử dụng loại trung bình nào?",
     options: [
-"Số trung bình;  Số trung vị ",
-"Số trung vị ; Số yếu vị ", 
-"Số yếu vị; Số trung bình ", 
-"Cả Số trung bình và Số trung vị đều bị ảnh hưởng như nhau"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Khi lập bảng phân phối tần số có khoảng cách tổ đều, chúng ta sử dụng đại lượng nào dưới đây để làm giá trị đại diện cho từng tổ nhằm tính toán các giá trị thống kê mẫu?",
-    options: [
-"Trị số giữa",
-"Giới hạn dưới của từng tổ", 
-"Tần số tích lũy", 
-"Khoảng cách tổ"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Khi các quan sát trong tập dữ liệu có mức độ quan trọng khác nhau, chúng ta bắt buộc phải sử dụng công thức nào dưới đây để tính toán giá trị trung tâm đại diện chính xác?",
-    options: [
+"Trung bình nhân",
+"Trung bình cộng",
 "Trung bình có trọng số",
-"Trung bình cộng đơn giản", 
-"Số trung vị ", 
-"Số yếu vị"],
+"Trung vị"],
     correct: [0]
   },
 
 {
     type: "single",
-    question: "Nhược điểm lớn nhất của chỉ tiêu Khoảng biến thiên là gì?",
+    question: "Muốn so sánh mức độ biến động giữa hai tập dữ liệu có đơn vị tính khác nhau (ví dụ: số xe bán ra và tiền hoa hồng), nên sử dụng chỉ tiêu nào?",
     options: [
-"Chỉ phụ thuộc hoàn toàn vào hai giá trị cực đoan (lớn nhất và nhỏ nhất) nên cực kỳ nhạy cảm và dễ bị bóp méo bởi các giá trị ngoại lệ",
-"Công thức tính toán phức tạp, đòi hỏi phải sử dụng phần mềm chuyên dụng", 
-"Không giữ được cùng đơn vị đo lường với dữ liệu thô ban đầu", 
-"Luôn luôn có xu hướng nhận giá trị bằng 0 khi cỡ mẫu lớn hơn 30"],
+"Hệ số biến thiên (CV)",
+"Phương sai",
+"Độ lệch chuẩn",
+"Khoảng biến thiên"],
     correct: [0]
   },
 
 {
     type: "single",
-    question: "Tại sao trong các báo cáo phân tích thực tế, Độ lệch chuẩn lại được sử dụng phổ biến và ưa chuộng hơn nhiều so với Phương sai?",
+    question: "Khoảng tứ phân vị IQR = Q3 - Q1 đo lường điều gì?",
     options: [
-"Độ lệch chuẩn có cùng đơn vị đo lường với dữ liệu thô ban đầu",
-"Độ lệch chuẩn không bị ảnh hưởng bởi các giá trị ngoại lệ", 
-"Độ lệch chuẩn dễ tính toán thủ công hơn phương sai", 
-"Phương sai chỉ được sử dụng cho dữ liệu định tính mẫu nhỏ"],
-    correct: [0]
-  },
-
-{
-    type: "multiple",
-    question: "Phát biểu nào sau đây là đúng về hệ số biến thiên?",
-    options: [
-"Hệ số biến thiên cho biết độ lệch chuẩn bằng bao nhiêu lần so với giá trị trung bình ",
-"Hệ số biến thiên là đại lượng không có đơn vị đo lường", 
-"Hệ số biến thiên được tính bằng cách lấy phương sai mẫu chia cho trung bình mẫu", 
-"Hệ số biến thiên là một chỉ tiêu đo xu hướng trung tâm của bộ dữ liệu"],
-    correct: [0, 1]
-  },
-
-{
-    type: "multiple",
-    question: "Phát biểu nào sau đây là đúng về các loại biểu đồ?",
-    options: [
-"Biểu đồ thanh (Bar Chart) mô tả cho dữ liệu định tính",
-"Biểu đồ phân phối tần số (Histogram) biểu diễn dữ liệu định lượng liên tục", 
-"Biểu đồ tròn (Pie chart) có thể thay thế cho biểu đồ thanh vì có thang đo rất chuẩn xác", 
-"Để đảm bảo tính mỹ thuật, các cột trong biểu đồ Histogram bắt buộc phải có khoảng trống ngăn cách đều nhau"],
-    correct: [0, 1]
-  },
-
-{
-    type: "single",
-    question: "Một mẫu dữ liệu nhỏ thu thập ngẫu nhiên gồm 3 quan sát: 2, 4, 6. Phương sai và Độ lệch chuẩn của mẫu số liệu này lần lượt là:",
-    options: [
-"4,00 ; 2,00",
-"8,00 ; 2,83",
-"2,67 ; 1,63",
-"2,00 ; 1,41"],
+"Độ phân tán của 50% quan sát nằm ở giữa tập dữ liệu",
+"Độ phân tán của toàn bộ tập dữ liệu",
+"Vị trí trung tâm của 50% quan sát nằm ở giữa",
+"Mức độ bất đối xứng của phân phối"],
     correct: [0]
   },
 
 {
     type: "single",
-    question: "Trong các chỉ số xác định vị trí tương đối, giá trị Tứ phân vị thứ ba (Q3) được định nghĩa chính xác là gì?",
+    question: "Một quan sát có giá trị chuẩn hóa z = -1,5. Ý nghĩa nào sau đây là đúng?",
     options: [
-"Là giá trị tương đương với phân vị thứ 75, phân tách 75% giá trị nhỏ nhất từ dưới lên và 25% giá trị lớn nhất từ trên xuống của tập dữ liệu đã sắp xếp",
-"Là giá trị phân chia tập dữ liệu đã sắp xếp thành hai phần bằng nhau",
-"Là giá trị tương đương với phân vị thứ 25, phân tách 25% giá trị nhỏ nhất của dữ liệu",
-"Là hiệu số giữa giá trị lớn nhất và giá trị nhỏ nhất của 50% lượng dữ liệu lõi ở giữa"],
+"Quan sát nhỏ hơn giá trị trung bình 1,5 lần độ lệch chuẩn",
+"Quan sát nhỏ hơn giá trị trung bình 1,5 đơn vị",
+"Quan sát lớn hơn giá trị trung bình 1,5 lần độ lệch chuẩn",
+"Quan sát lớn hơn giá trị trung bình 1,5 đơn vị"],
     correct: [0]
   },
+
 {
     type: "single",
-    question: "Cho mẫu số liệu thô đã được sắp xếp tăng dần như sau: 5, 6, 12, 13, 15, 18, 22, 50. Theo quy tắc hàng rào Tukey sử dụng khoảng tứ phân vị (IQR), tập dữ liệu này có chứa giá trị ngoại lệ nào không?",
+    question: "Với phân phối lệch phải (Skewness > 0), thứ tự nào sau đây thường đúng?",
     options: [
-"Có một giá trị ngoại lệ duy nhất là 50",
-"Không có giá trị ngoại lệ nào",
-"Có một giá trị ngoại lệ duy nhất là 5",
-"Có hai giá trị ngoại lệ là 5 và 50"],
+"Yếu vị < Trung vị < Trung bình",
+"Trung bình < Trung vị < Yếu vị",
+"Trung bình = Trung vị = Yếu vị",
+"Trung vị < Yếu vị < Trung bình"],
     correct: [0]
   },
+
+{
+    type: "single",
+    question: "Một phân phối có hệ số Kurtosis = 4,2. Nhận xét nào sau đây là đúng?",
+    options: [
+"Phân phối có đỉnh nhọn và cao hơn phân phối chuẩn",
+"Phân phối có đỉnh tù (bẹt), trải rộng hơn phân phối chuẩn",
+"Phân phối lệch phải",
+"Phân phối có độ nhọn giống phân phối chuẩn"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Hệ số tương quan giữa chi phí quảng cáo và doanh thu là r = -0,92. Kết luận nào sau đây là đúng?",
+    options: [
+"Hai biến có mối liên hệ tuyến tính nghịch, rất mạnh",
+"Hai biến có mối liên hệ tuyến tính thuận, rất mạnh",
+"Hai biến có mối liên hệ tuyến tính nghịch, rất yếu",
+"Hai biến không có mối liên hệ tuyến tính vì r < 0"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Tra bảng phân phối chuẩn tắc, xác suất P(-1,2 < Z < 0,8) bằng:",
+    options: [
+"0,6730",
+"0,9032",
+"0,3270",
+"0,4730"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Hai phân phối chuẩn có cùng trung bình, phân phối thứ hai có độ lệch chuẩn lớn hơn. So với phân phối thứ nhất, đường mật độ của phân phối thứ hai:",
+    options: [
+"Thấp hơn và trải rộng hơn",
+"Dịch sang phải",
+"Cao hơn và hẹp hơn",
+"Không thay đổi hình dạng"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Giá trị tới hạn z sao cho diện tích đuôi phải bằng 0,025 dưới đường cong chuẩn tắc là:",
+    options: [
+"1,960",
+"1,645",
+"2,326",
+"2,576"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Cho P(Z < 1,5) = 0,9332. Xác suất P(Z < -1,5) bằng:",
+    options: [
+"0,0668",
+"0,4332",
+"0,9332",
+"0,8664"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "So với phân phối chuẩn tắc, phân phối Student có đặc điểm:",
+    options: [
+"Đối xứng quanh 0, đỉnh thấp hơn và đuôi dày hơn",
+"Lệch phải và chỉ nhận giá trị dương",
+"Đối xứng quanh 0 nhưng đỉnh cao hơn, đuôi mỏng hơn",
+"Có trung bình bằng số bậc tự do"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Khi số bậc tự do của phân phối Student tăng dần, phân phối t:",
+    options: [
+"Tiến dần về phân phối chuẩn tắc",
+"Ngày càng lệch phải",
+"Tiến dần về phân phối Chi bình phương",
+"Có đuôi ngày càng dày hơn"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Phát biểu nào sau đây đúng về phân phối Chi bình phương Chi bình phương?",
+    options: [
+"Chỉ nhận giá trị không âm, lệch phải và dần đối xứng khi bậc tự do tăng",
+"Đối xứng quanh 0 như phân phối chuẩn",
+"Nhận mọi giá trị thực, kể cả giá trị âm",
+"Hai giá trị tới hạn hai đuôi luôn là hai số đối nhau"],
+    correct: [0]
+  },
+
+{
+    type: "single",
+    question: "Một mẫu ngẫu nhiên gồm 12 quan sát. Tra bảng phân phối Student, giá trị tới hạn t ứng với diện tích đuôi phải bằng 0,025 là:",
+    options: [
+"2,201",
+"2,179",
+"1,796",
+"1,960"],
+    correct: [0]
+  },
+
 ];
 
 /* ============================================================
