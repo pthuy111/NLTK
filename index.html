@@ -494,7 +494,7 @@
    ============================================================ */
 const CONFIG = {
   // Mật khẩu để sinh viên truy cập bài làm (giảng viên cung cấp cho SV trong buổi thi)
-  password: "1208",
+  password: "300926",
 
   // Thời gian tối đa cho MỖI câu hỏi (đơn vị: giây)
   timePerQuestion: 40,
@@ -510,14 +510,14 @@ const CONFIG = {
 
   // Mã đề: đổi chuỗi này (vd sang "de-thi-02") khi đổi bộ câu hỏi cho chương khác,
   // để "làm mới" giới hạn 1 lần/thiết bị đang lưu trên trình duyệt của mã đề cũ.
-  examId: "B06",
+  examId: "B08",
 
   // Link Web App (Google Apps Script) để tự động gửi điểm về Google Sheet ngay khi SV nộp bài.
   // Để trống "" nếu chưa thiết lập — công cụ vẫn chạy bình thường, chỉ không gửi điểm tự động.
   scoreWebhookUrl: "https://script.google.com/macros/s/AKfycbxuH9oSwAMGKxJx-zpUENFElJgsHeTXS7jDLntofJXGUPGnExkz5qaMNvHk8rhm3OGj/exec",
 
   // Nhãn buổi học, sẽ hiển thị trong cột "Buổi" của Google Sheet kết quả (vd "Buổi 2", "Buổi 7")
-  buoiHoc: "Buổi 6",
+  buoiHoc: "Buổi 8",
 
   // Danh sách LỚP HỌC PHẦN để sinh viên chọn ở màn hình đầu tiên (thay vì gõ tay).
   // Sửa danh sách bên dưới cho đúng với các lớp bạn đang dạy — mỗi lớp 1 dòng,
@@ -544,204 +544,183 @@ const CONFIG = {
    bên dưới rồi sửa nội dung.
    ============================================================ */
 const QUESTIONS = [
-
-{
+const QUESTIONS = [
+  // ===================== THỐNG KÊ MÔ TẢ (10 câu) =====================
+  {
     type: "single",
-    question: "Để so sánh tỷ trọng giữa một số ít nhóm của biến định tính, loại biểu đồ nào phù hợp nhất?",
+    question: "Số đơn hàng một cửa hàng nhận được trong 5 ngày là: 4, 6, 8, 10, 12. Số đơn hàng trung bình mỗi ngày là:",
+    options: ["7 đơn", "8 đơn", "10 đơn", "40 đơn"],
+    correct: [1]
+  },
+  {
+    type: "single",
+    question: "Thời gian (phút) chờ thanh toán của 6 khách hàng: 7, 3, 9, 5, 12, 4. Trung vị của dữ liệu là:",
+    options: ["5 phút", "6,67 phút", "6 phút", "7 phút"],
+    correct: [2]
+  },
+  {
+    type: "single",
+    question: "Một mẫu gồm 4 quan sát: 2, 4, 6, 8. Phương sai mẫu s^2 bằng:",
+    options: ["6,67", "5", "2,58", "20"],
+    correct: [0]
+  },
+  {
+    type: "single",
+    question: "Kết quả tính sẵn về thu nhập tháng (triệu đồng) của nhân viên công ty X: trung bình = 15, trung vị = 11, có vài quản lý cấp cao thu nhập trên 80. Để mô tả mức thu nhập \"điển hình\" của nhân viên, nhận định nào hợp lý nhất?",
     options: [
-"Biểu đồ tròn (Pie chart)",
-"Biểu đồ phân phối tần số (Histogram)",
-"Đồ thị phân tán (Scatter plot)",
-"Biểu đồ nhánh - lá (Stem-and-leaf plot)"],
+      "Phân phối lệch trái, nên dùng trung bình 15 triệu",
+      "Phân phối đối xứng, dùng trung bình hay trung vị đều như nhau",
+      "Nên dùng khoảng biến thiên vì dữ liệu có giá trị ngoại lệ",
+      "Phân phối lệch phải do các giá trị rất lớn, nên dùng trung vị 11 triệu"
+    ],
+    correct: [3]
+  },
+  {
+    type: "single",
+    question: "Hai dây chuyền đóng gói: dây chuyền A đóng gói 500 g, độ lệch chuẩn 10 g; dây chuyền B đóng gói 200 g, độ lệch chuẩn 6 g. Kết luận nào đúng về mức độ ổn định?",
+    options: [
+      "A ổn định hơn vì hệ số biến thiên của A (2%) nhỏ hơn của B (3%)",
+      "B ổn định hơn vì độ lệch chuẩn của B nhỏ hơn",
+      "A kém ổn định hơn vì độ lệch chuẩn của A lớn hơn",
+      "Không thể so sánh vì hai dây chuyền có trọng lượng khác nhau"
+    ],
+    correct: [0]
+  },
+  {
+    type: "single",
+    question: "Sinh viên An đạt 78 điểm ở lớp có trung bình 70, độ lệch chuẩn 5. Sinh viên Bình đạt 85 điểm ở lớp có trung bình 80, độ lệch chuẩn 4. Dựa vào giá trị chuẩn hóa z, kết luận nào đúng?",
+    options: [
+      "Bình có thành tích tương đối tốt hơn vì điểm cao hơn",
+      "An có thành tích tương đối tốt hơn (z = 1,6 so với z = 1,25)",
+      "Hai bạn có thành tích tương đối như nhau",
+      "Bình có thành tích tương đối tốt hơn (z = 1,25 so với z = 1,6)"
+    ],
+    correct: [1]
+  },
+  {
+    type: "single",
+    question: "Dữ liệu doanh số ngày (triệu đồng) có Q1 = 12 và Q3 = 20. Theo quy tắc 1,5 IQR, giới hạn trên để nhận diện giá trị ngoại lệ là:",
+    options: ["28", "26", "44", "32"],
+    correct: [3]
+  },
+  {
+    type: "single",
+    question: "Kết quả R cho điểm thi của một lớp: mean = 6,2; median = 6,8; skewness = -0,85. Nhận xét nào đúng?",
+    options: [
+      "Phân phối lệch phải, đa số sinh viên có điểm thấp",
+      "Phân phối gần đối xứng",
+      "Phân phối lệch trái, có một số ít sinh viên điểm rất thấp kéo trung bình xuống",
+      "Phân phối có đỉnh nhọn hơn phân phối chuẩn"
+    ],
+    correct: [2]
+  },
+  {
+    type: "single",
+    question: "Khảo sát 20 hộ gia đình về số con: 0 con có 5 hộ, 1 con có 10 hộ, 2 con có 4 hộ, 3 con có 1 hộ. Số con trung bình mỗi hộ là:",
+    options: ["1,5 con", "1,05 con", "0,95 con", "5 con"],
+    correct: [1]
+  },
+  {
+    type: "single",
+    question: "Phân tích 30 cửa hàng cho hệ số tương quan giữa chi phí quảng cáo và doanh thu là r = 0,85. Nhà quản lý nên hiểu kết quả này như thế nào?",
+    options: [
+      "Chi phí quảng cáo và doanh thu có liên hệ tuyến tính thuận, khá mạnh",
+      "Tăng quảng cáo chắc chắn làm doanh thu tăng 85%",
+      "Hai biến có liên hệ tuyến tính nghịch, khá mạnh",
+      "85% cửa hàng có doanh thu tăng khi tăng quảng cáo"
+    ],
     correct: [0]
   },
 
-{
+  // ===================== ƯỚC LƯỢNG THAM SỐ (5 câu) =====================
+  {
     type: "single",
-    question: "Đặc điểm nào sau đây đúng với biểu đồ phân phối tần số (Histogram)?",
-    options: [
-"Các cột vẽ liền kề nhau, mỗi cột đại diện cho một khoảng giá trị của biến định lượng",
-"Dùng cho biến định tính, các cột cách nhau",
-"Các cột được sắp xếp theo tần số giảm dần",
-"Mỗi quan sát được biểu diễn bằng một cặp tọa độ (x, y)"],
+    question: "Thời gian giao hàng có độ lệch chuẩn tổng thể sigma = 9 phút. Mẫu n = 36 đơn hàng có trung bình 30 phút. Khoảng tin cậy 95% cho thời gian giao hàng trung bình (z = 1,96) là:",
+    options: ["(28,04; 31,96)", "(27,06; 32,94)", "(12,36; 47,64)", "(29,51; 30,49)"],
+    correct: [1]
+  },
+  {
+    type: "single",
+    question: "Khảo sát 400 khách hàng, có 120 người hài lòng với dịch vụ. Khoảng tin cậy 95% cho tỷ lệ khách hàng hài lòng (z = 1,96) là:",
+    options: ["(0,255; 0,345)", "(0,262; 0,338)", "(0,210; 0,390)", "(0,277; 0,323)"],
     correct: [0]
+  },
+  {
+    type: "single",
+    question: "Muốn ước lượng thời gian giao hàng trung bình với độ tin cậy 95% (z = 1,96), sai số biên không quá 2 phút, biết sigma = 9 phút. Cỡ mẫu tối thiểu cần chọn là:",
+    options: ["77", "55", "9", "78"],
+    correct: [3]
+  },
+  {
+    type: "single",
+    question: "Khoảng tin cậy 95% cho mức chi tiêu trung bình mỗi lần mua sắm của khách hàng là (48; 56) nghìn đồng. Một nhân viên cho rằng mức chi tiêu trung bình là 60 nghìn đồng. Nhận định nào đúng?",
+    options: [
+      "95% khách hàng chi tiêu từ 48 đến 56 nghìn đồng mỗi lần",
+      "Nhận định 60 nghìn đồng là hợp lý vì gần cận trên của khoảng",
+      "Với độ tin cậy 95%, chi tiêu trung bình tổng thể nằm trong (48; 56), nên nhận định 60 nghìn đồng không phù hợp với dữ liệu",
+      "Trung bình mẫu có 95% khả năng nằm trong khoảng (48; 56)"
+    ],
+    correct: [2]
+  },
+  {
+    type: "single",
+    question: "Khối lượng sản phẩm có phân phối chuẩn, chưa biết sigma. Mẫu n = 16 có trung bình 50 g, độ lệch chuẩn mẫu s = 4 g. Cho t(0,025; 15) = 2,131. Khoảng tin cậy 95% cho khối lượng trung bình là:",
+    options: ["(48,04; 51,96)", "(49,47; 50,53)", "(41,48; 58,52)", "(47,87; 52,13)"],
+    correct: [3]
   },
 
-{
+  // ===================== KIỂM ĐỊNH GIẢ THUYẾT 1 TỔNG THỂ (5 câu) =====================
+  {
     type: "single",
-    question: "Khi tập dữ liệu có giá trị ngoại lai rất lớn, đại lượng nào nên được ưu tiên sử dụng để đo xu hướng trung tâm?",
+    question: "Công ty cam kết thời gian giao hàng trung bình không quá 30 phút. Hiệp hội người tiêu dùng nghi ngờ thời gian giao hàng thực tế lâu hơn. Cặp giả thuyết phù hợp là:",
     options: [
-"Trung vị",
-"Trung bình cộng",
-"Khoảng biến thiên",
-"Độ lệch chuẩn"],
+      "H0: mu = 30; H1: mu khác 30",
+      "H0: mu = 30; H1: mu > 30",
+      "H0: mu = 30; H1: mu < 30",
+      "H0: mu > 30; H1: mu = 30"
+    ],
+    correct: [1]
+  },
+  {
+    type: "single",
+    question: "Một báo cáo cho rằng 40% sinh viên đi làm thêm. Khảo sát 200 sinh viên thấy tỷ lệ mẫu là 35%. Giá trị thống kê kiểm định z (tính với p0 = 0,4) là:",
+    options: ["1,44", "-0,21", "-1,44", "-0,05"],
+    correct: [2]
+  },
+  {
+    type: "single",
+    question: "Kiểm định H0: mu = 50; H1: mu > 50 về doanh số trung bình ngày. Từ mẫu n = 25 ngày tính được thống kê kiểm định t = 2,45 và p-value = 0,011. Với mức ý nghĩa 5%, quyết định nào đúng?",
+    options: [
+      "Bác bỏ H0: có đủ bằng chứng cho thấy doanh số trung bình lớn hơn 50",
+      "Không bác bỏ H0 vì p-value nhỏ hơn 0,05",
+      "Chấp nhận H0: doanh số trung bình đúng bằng 50",
+      "Không đủ thông tin để kết luận vì chưa biết độ lệch chuẩn tổng thể"
+    ],
     correct: [0]
   },
-
-{
+  {
     type: "single",
-    question: "Để tính tốc độ tăng trưởng bình quân qua nhiều năm liên tiếp, nên sử dụng loại trung bình nào?",
+    question: "Kiểm định hai phía xem máy đóng gói có đóng đúng 500 g hay không, kết quả p-value = 0,08. Với mức ý nghĩa 5%, kết luận nào phù hợp?",
     options: [
-"Trung bình nhân",
-"Trung bình cộng",
-"Trung bình có trọng số",
-"Trung vị"],
-    correct: [0]
+      "Bác bỏ H0: máy đóng gói bị sai lệch",
+      "Chứng minh được chắc chắn máy đóng gói đúng 500 g",
+      "Bác bỏ H0 vì p-value lớn hơn 0,05",
+      "Không bác bỏ H0: chưa đủ bằng chứng cho thấy máy đóng gói sai lệch so với 500 g"
+    ],
+    correct: [3]
   },
-
-{
+  {
     type: "single",
-    question: "Muốn so sánh mức độ biến động giữa hai tập dữ liệu có đơn vị tính khác nhau (ví dụ: số xe bán ra và tiền hoa hồng), nên sử dụng chỉ tiêu nào?",
+    question: "Khối lượng gói cà phê có sigma = 4 g. Mẫu n = 16 gói có trung bình 502 g. Kiểm định H0: mu = 500; H1: mu khác 500 với mức ý nghĩa 5% (giá trị tới hạn 1,96). Thống kê kiểm định và kết luận là:",
     options: [
-"Hệ số biến thiên (CV)",
-"Phương sai",
-"Độ lệch chuẩn",
-"Khoảng biến thiên"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Khoảng tứ phân vị IQR = Q₃ − Q₁ đo lường điều gì?",
-    options: [
-"Độ phân tán của 50% quan sát nằm ở giữa tập dữ liệu",
-"Độ phân tán của toàn bộ tập dữ liệu",
-"Vị trí trung tâm của 50% quan sát nằm ở giữa",
-"Mức độ bất đối xứng của phân phối"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Một quan sát có giá trị chuẩn hóa z = −1,5. Ý nghĩa nào sau đây là đúng?",
-    options: [
-"Quan sát nhỏ hơn giá trị trung bình 1,5 lần độ lệch chuẩn",
-"Quan sát nhỏ hơn giá trị trung bình 1,5 đơn vị",
-"Quan sát lớn hơn giá trị trung bình 1,5 lần độ lệch chuẩn",
-"Quan sát lớn hơn giá trị trung bình 1,5 đơn vị"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Với phân phối lệch phải (Skewness > 0), thứ tự nào sau đây thường đúng?",
-    options: [
-"Yếu vị < Trung vị < Trung bình",
-"Trung bình < Trung vị < Yếu vị",
-"Trung bình = Trung vị = Yếu vị",
-"Trung vị < Yếu vị < Trung bình"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Một phân phối có hệ số Kurtosis = 4,2. Nhận xét nào sau đây là đúng?",
-    options: [
-"Phân phối có đỉnh nhọn và cao hơn phân phối chuẩn",
-"Phân phối có đỉnh tù (bẹt), trải rộng hơn phân phối chuẩn",
-"Phân phối lệch phải",
-"Phân phối có độ nhọn giống phân phối chuẩn"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Hệ số tương quan giữa chi phí quảng cáo và doanh thu là r = −0,92. Kết luận nào sau đây là đúng?",
-    options: [
-"Hai biến có mối liên hệ tuyến tính nghịch, rất mạnh",
-"Hai biến có mối liên hệ tuyến tính thuận, rất mạnh",
-"Hai biến có mối liên hệ tuyến tính nghịch, rất yếu",
-"Hai biến không có mối liên hệ tuyến tính vì r < 0"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Tra bảng phân phối chuẩn tắc, xác suất P(−1,2 < Z < 0,8) bằng:",
-    options: [
-"0,6730",
-"0,9032",
-"0,3270",
-"0,4730"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Hai phân phối chuẩn có cùng trung bình, phân phối thứ hai có độ lệch chuẩn lớn hơn. So với phân phối thứ nhất, đường mật độ của phân phối thứ hai:",
-    options: [
-"Thấp hơn và trải rộng hơn",
-"Dịch sang phải",
-"Cao hơn và hẹp hơn",
-"Không thay đổi hình dạng"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Giá trị tới hạn z sao cho diện tích đuôi phải bằng 0,025 dưới đường cong chuẩn tắc là:",
-    options: [
-"1,960",
-"1,645",
-"2,326",
-"2,576"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Cho P(Z < 1,5) = 0,9332. Xác suất P(Z < −1,5) bằng:",
-    options: [
-"0,0668",
-"0,4332",
-"0,9332",
-"0,8664"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "So với phân phối chuẩn tắc, phân phối Student có đặc điểm:",
-    options: [
-"Đối xứng quanh 0, đỉnh thấp hơn và đuôi dày hơn",
-"Lệch phải và chỉ nhận giá trị dương",
-"Đối xứng quanh 0 nhưng đỉnh cao hơn, đuôi mỏng hơn",
-"Có trung bình bằng số bậc tự do"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Khi số bậc tự do của phân phối Student tăng dần, phân phối t:",
-    options: [
-"Tiến dần về phân phối chuẩn tắc",
-"Ngày càng lệch phải",
-"Tiến dần về phân phối Chi bình phương",
-"Có đuôi ngày càng dày hơn"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Phát biểu nào sau đây đúng về phân phối Chi bình phương (χ²)?",
-    options: [
-"Chỉ nhận giá trị không âm, lệch phải và dần đối xứng khi bậc tự do tăng",
-"Đối xứng quanh 0 như phân phối chuẩn",
-"Nhận mọi giá trị thực, kể cả giá trị âm",
-"Hai giá trị tới hạn hai đuôi luôn là hai số đối nhau"],
-    correct: [0]
-  },
-
-{
-    type: "single",
-    question: "Một mẫu ngẫu nhiên gồm 12 quan sát. Tra bảng phân phối Student, giá trị tới hạn t ứng với diện tích đuôi phải bằng 0,025 là:",
-    options: [
-"2,201",
-"2,179",
-"1,796",
-"1,960"],
-    correct: [0]
-  },
+      "z = 0,5; không bác bỏ H0",
+      "z = 2; không bác bỏ H0",
+      "z = 2; bác bỏ H0",
+      "z = 8; bác bỏ H0"
+    ],
+    correct: [2]
+  }
+];
 
 ];
 
