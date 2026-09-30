@@ -423,7 +423,7 @@
         <li>Sau khi đã chuyển sang câu mới, bạn <strong>không thể quay lại</strong> câu trước để sửa đáp án.</li>
         <li>Bài làm sẽ hiển thị ở chế độ toàn màn hình. Trong khi làm bài, <strong>không thoát toàn màn hình, không chuyển sang tab/ứng dụng khác, không thu nhỏ cửa sổ</strong>.</li>
         <li>Không chụp ảnh màn hình, không sao chép nội dung đề trong khi làm bài.</li>
-        <li id="rule-once-line">Mỗi thiết bị chỉ được làm <strong>1 lần duy nhất</strong>.</li>
+        <li id="rule-once-line">Mỗi sinh viên và mỗi thiết bị chỉ được làm <strong>1 lần duy nhất</strong> — kể cả khi mở link bằng trình duyệt khác hoặc cửa sổ ẩn danh.</li>
         <li class="rule-warning">Nếu vi phạm bất kỳ quy định nào ở trên, bài làm sẽ <strong>bị khóa ngay lập tức</strong> và nhận 0 điểm.</li>
       </ul>
       <button id="btn-start-exam" class="btn-primary btn-large">Bắt đầu làm bài</button>
@@ -515,6 +515,21 @@ const CONFIG = {
   // Link Web App (Google Apps Script) để tự động gửi điểm về Google Sheet ngay khi SV nộp bài.
   // Để trống "" nếu chưa thiết lập — công cụ vẫn chạy bình thường, chỉ không gửi điểm tự động.
   scoreWebhookUrl: "https://script.google.com/macros/s/AKfycbxuH9oSwAMGKxJx-zpUENFElJgsHeTXS7jDLntofJXGUPGnExkz5qaMNvHk8rhm3OGj/exec",
+
+  // CHẶN MỞ LINK Ở NHIỀU TRÌNH DUYỆT KHÁC NHAU (cần cập nhật Google Apps Script — xem file apps-script-chan-thiet-bi.gs)
+  // Khi SV nhập đúng mật khẩu, công cụ gửi MSSV + "dấu vân tay thiết bị" lên Google Sheet (tab "ThietBi")
+  // để kiểm tra. Bị chặn nếu MSSV này, hoặc thiết bị này, đã đăng ký từ một trình duyệt/cửa sổ khác.
+  deviceCheck: {
+    // true = chặn theo MSSV (1 MSSV chỉ làm được trên 1 trình duyệt duy nhất)
+    enabled: true,
+    // true = chặn thêm theo thiết bị (dù nhập MSSV khác). LƯU Ý: các máy GIỐNG HỆT nhau
+    // (vd 2 iPhone cùng đời, máy phòng lab cùng cấu hình) có thể bị nhận nhầm là 1 thiết bị.
+    // Nếu SV báo bị chặn nhầm: xoá dòng tương ứng trong tab "ThietBi", hoặc đặt false.
+    blockSameDevice: true,
+    // true = nếu không kết nối được máy chủ kiểm tra thì KHÔNG cho vào làm bài (an toàn hơn)
+    // false = mất kết nối thì vẫn cho vào làm bài
+    requireServer: true,
+  },
 
   // Nhãn buổi học, sẽ hiển thị trong cột "Buổi" của Google Sheet kết quả (vd "Buổi 2", "Buổi 7")
   buoiHoc: "Buổi 8",
@@ -785,6 +800,129 @@ function submitScore(lop,mssv, hoten, buoi, diem){
   } catch(e){console.error("Lỗi gửi điểm:", e);}
 }
 
+/* ---------- Chặn mở ở nhiều trình duyệt trên cùng thiết bị ---------- */
+// Mã ngẫu nhiên riêng cho từng trình duyệt (trình duyệt khác / cửa sổ ẩn danh sẽ có mã khác)
+function getBrowserToken(){
+  const key = "examToken_" + CONFIG.examId;
+  function randomHex(){
+    const a = new Uint8Array(16);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    return Array.prototype.map.call(a, function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
+  }
+  try {
+    let t = localStorage.getItem(key);
+    if (!t){ t = randomHex(); localStorage.setItem(key, t); }
+    return t;
+  } catch(e){ return randomHex(); }
+}
+
+function hashString(str){
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < str.length; i++){
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+}
+
+function detectInstalledFonts(){
+  const fonts = ["Arial Black","Calibri","Cambria","Candara","Comic Sans MS","Consolas","Constantia",
+    "Corbel","Franklin Gothic Medium","Gabriola","Impact","Lucida Console","Palatino Linotype",
+    "Segoe Print","Segoe Script","Sylfaen","Tahoma","Trebuchet MS","Verdana","Georgia",
+    "Helvetica Neue","Menlo","Monaco","Optima","Futura","Avenir","Baskerville","Didot","Gill Sans",
+    "American Typewriter","Noto Sans","Roboto","Ubuntu","DejaVu Sans","Microsoft YaHei","MS Gothic"];
+  const bases = ['monospace','serif','sans-serif'];
+  const text = 'mmmmmmmmmmlliWWQ@#0123456789';
+  try {
+    const ctx = document.createElement('canvas').getContext('2d');
+    const baseW = bases.map(function(b){ ctx.font = '72px ' + b; return ctx.measureText(text).width; });
+    return fonts.filter(function(f){
+      return bases.some(function(b, i){
+        ctx.font = '72px "' + f + '", ' + b;
+        return ctx.measureText(text).width !== baseW[i];
+      });
+    });
+  } catch(e){ return []; }
+}
+
+function getPlatformFamily(){
+  const ua = navigator.userAgent || '';
+  if (/Android/i.test(ua)) return 'Android';
+  if (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) return 'iOS';
+  if (/Windows/i.test(ua)) return 'Windows';
+  if (/Macintosh|Mac OS/i.test(ua)) return 'Mac';
+  if (/CrOS/i.test(ua)) return 'ChromeOS';
+  if (/Linux/i.test(ua)) return 'Linux';
+  return 'Other';
+}
+
+// "Dấu vân tay" thiết bị: chỉ dùng các đặc điểm phần cứng/hệ điều hành,
+// giống nhau giữa Chrome, Edge, Firefox, Cốc Cốc, Safari... trên cùng 1 máy.
+function getDeviceFingerprint(){
+  const s = window.screen || {};
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.round((s.width || 0) * dpr), h = Math.round((s.height || 0) * dpr);
+  let tz = '';
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch(e){}
+  const parts = [
+    Math.max(w, h) + 'x' + Math.min(w, h),
+    s.colorDepth || 0,
+    tz,
+    navigator.hardwareConcurrency || 0,
+    navigator.maxTouchPoints || 0,
+    getPlatformFamily(),
+    detectInstalledFonts().join(','),
+  ];
+  return hashString(parts.join('|'));
+}
+
+// Kết quả: {status:'ok'} | {status:'blocked', reason} | {status:'error'}
+function registerDeviceOnServer(){
+  const params = new URLSearchParams({
+    action: 'registerDevice',
+    examId: CONFIG.examId,
+    lop: state.student.lop,
+    mssv: state.student.mssv,
+    hoten: state.student.hoten,
+    fp: getDeviceFingerprint(),
+    token: getBrowserToken(),
+    checkFp: CONFIG.deviceCheck.blockSameDevice ? '1' : '0',
+    ua: navigator.userAgent.slice(0, 200),
+  });
+  const ctrl = window.AbortController ? new AbortController() : null;
+  const timer = setTimeout(function(){ if (ctrl) ctrl.abort(); }, 15000);
+  return fetch(CONFIG.scoreWebhookUrl + '?' + params.toString(), { method: 'GET', signal: ctrl ? ctrl.signal : undefined })
+    .then(function(r){ return r.text(); })
+    .then(function(txt){
+      clearTimeout(timer);
+      let data = null;
+      try { data = JSON.parse(txt); } catch(e){}
+      // Apps Script chưa được cập nhật đoạn kiểm tra thiết bị → bỏ qua, cho làm bài bình thường
+      if (!data || data.deviceCheck !== true){
+        console.warn('Apps Script chưa hỗ trợ kiểm tra thiết bị — bỏ qua bước chặn trình duyệt.');
+        return { status: 'ok' };
+      }
+      return data.ok ? { status: 'ok' } : { status: 'blocked', reason: data.reason };
+    })
+    .catch(function(){ clearTimeout(timer); return { status: 'error' }; });
+}
+
+function showServerBlocked(reason){
+  const msgs = {
+    mssv: 'MSSV ' + state.student.mssv + ' đã được dùng để vào bài thi này trên một trình duyệt hoặc thiết bị khác. Mỗi sinh viên chỉ được làm bài trên 1 trình duyệt duy nhất.',
+    device: 'Thiết bị này đã được dùng để vào bài thi (có thể từ một trình duyệt khác hoặc cửa sổ ẩn danh). Mỗi thiết bị chỉ được làm bài 1 lần.',
+    browser: 'Trình duyệt này đã được đăng ký cho một MSSV khác. Không thể đổi sang MSSV khác.',
+  };
+  const msg = (msgs[reason] || 'Bạn không thể vào bài thi này.') + ' Vui lòng liên hệ giảng viên nếu cần hỗ trợ.';
+  setDeviceStatus('locked', msg);
+  showScreen('blocked');
+  $('#blocked-title').textContent = 'Không thể truy cập bài thi';
+  $('#blocked-message').textContent = msg;
+}
+
 function formatDateTime(d){
   const pad = n => String(n).padStart(2, '0');
   return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ' - ' + pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear();
@@ -935,12 +1073,35 @@ $('#btn-back-info').addEventListener('click', function(){ showScreen('info'); })
 $('#form-password').addEventListener('submit', function(e){
   e.preventDefault();
   const val = $('#input-password').value;
-  if (val === CONFIG.password){
-    $('#password-error').hidden = true;
-    showScreen('instructions');
-  } else {
-    $('#password-error').hidden = false;
+  const errEl = $('#password-error');
+  if (val !== CONFIG.password){
+    errEl.textContent = 'Sai mật khẩu. Vui lòng thử lại.';
+    errEl.hidden = false;
+    return;
   }
+  errEl.hidden = true;
+
+  if (CONFIG.allowMultipleAttempts || !CONFIG.deviceCheck.enabled || !CONFIG.scoreWebhookUrl){
+    showScreen('instructions');
+    return;
+  }
+
+  const btn = this.querySelector('button[type="submit"]');
+  const btnLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Đang kiểm tra thiết bị…';
+  registerDeviceOnServer().then(function(res){
+    btn.disabled = false;
+    btn.textContent = btnLabel;
+    if (res.status === 'ok' || (res.status === 'error' && !CONFIG.deviceCheck.requireServer)){
+      showScreen('instructions');
+    } else if (res.status === 'blocked'){
+      showServerBlocked(res.reason);
+    } else {
+      errEl.textContent = 'Không kết nối được máy chủ để xác minh thiết bị. Vui lòng kiểm tra mạng rồi bấm lại.';
+      errEl.hidden = false;
+    }
+  });
 });
 
 $('#btn-start-exam').addEventListener('click', startExam);
